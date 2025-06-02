@@ -4,7 +4,7 @@ Q. 회원의 아이디정보와 비밀번호 정보가 들어있는 객체 user�
 
 - 요구사항
 1. 사용자에게 아이디를 입력받으세요.
-2. 입력된 아이디가 객체에 존재하는 key가 아니라면
+2. 입력된 아이디가 객체에 존재하는 account가 아니라면
    "존재하지 않는 회원입니다"를 출력하세요.
 3. 아이디가 존재한다면 비밀번호를 입력받으세요.
 4. 비밀번호가 입력한 아이디에 대응해서 일치한다면
@@ -37,3 +37,34 @@ let userInfo = {
     ],
 };
 
+
+while (true) {
+    // 1. 아이디 입력받기
+    let userId = prompt('계정을 입력하세요!');
+
+    // 2. 아이디 존재 여부 확인
+    let foundUser = null; // 찾은 사용자 정보를 저장
+    for (let user of userInfo.userList) {
+        if (userId === user.account) {
+            foundUser = user; // 일치하는 사용자 객체 저장
+            break; // 일치하는 사용자 찾으면 루프 종료
+        }
+    }
+
+    // 3. 아이디 없으면 메시지 출력
+    if (!foundUser) {
+        alert('존재하지 않는 회원입니다.');
+        continue; // 다시 아이디 입력부터 시작
+    }
+
+    // 4. 비밀번호 입력받기
+    let userPw = prompt('비밀번호를 입력하세요!');
+
+    // 5. 비밀번호 확인
+    if (userPw === foundUser.password) {
+        alert('로그인 성공');
+        break; // 로그인 성공 시 while 루프 탈출
+    } else {
+        alert('비밀번호가 틀렸습니다.');
+    }
+}
