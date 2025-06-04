@@ -7,7 +7,7 @@ function covertVentiTooMeter(cm) {
 
 //bmi 값을 전달받아 현재 체중 상태를 출력하는 함수
 
-function judgeBmi() {
+function judgeBmi(bmi) {
     if (bmi > 25) {
         console.log('당신은 과체중입니다.');
     } else if (bmi < 18.5) {
