@@ -37,6 +37,59 @@ let userInfo = {
     ],
 };
 
+while (true){
+// 로그인 로직
+// 사용자가 입력한 계정명으로 해당 게정데이터를 찾아내기
+let inputAccount = prompt(`계정을 입력하세요`);
+
+// let flag = false; currentUser가 있기에 필요가 없음
+let currentUser = null; // 발견된 유저를 백업할 변수  null은 기본 false
+for (let user of userInfo.userList){
+    // console.log(user.account);
+    if(inputAccount === user.account){
+       // console.log(`가입된 계정입니다.`);
+        flag = true; // 있는 계정이면 flag가 트루
+        currentUser = user;
+        break; // 아이디 찾으면 탈출 후 아래 비번 코드 ㄱㄱ
+    }
+}
+    if (!currentUser){ // (없는 계정이면 여전히 false) 아무메세지도 나오지 않았다면
+        alert(`회원가입된 계정이 아닙니다.`);
+        continue;
+    }
+
+    let inputPassword = prompt(`비밀번호를 입력하세요!`);
+
+    //비번체크
+    if(inputPassword === currentUser.password){
+        alert(`${currentUser.username}님 로그인성공`);
+        break; // 로그인 성공 시 탈출
+    }else {
+        alert(`비번틀림`);
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
 
 while (true) {
     // 1. 아이디 입력받기
@@ -67,4 +120,4 @@ while (true) {
     } else {
         alert('비밀번호가 틀렸습니다.');
     }
-}
+}*/
