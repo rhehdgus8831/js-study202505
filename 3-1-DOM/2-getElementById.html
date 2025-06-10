@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Title</title>
+    <style>
+        #peach {
+            color: pink;
+        }
+    </style>
+</head>
+<body>
+    <ul>
+        <li id="apple">사과</li>
+        <li id="banana">바나나</li>
+        <li id="grape">포도</li>
+        <li id="peach" style="font-size: 1.5em">복숭아</li>
+    </ul>
+
+    <script>
+
+        const $banana = document.getElementById('banana');
+        console.log(typeof $banana);
+        console.log($banana.tagName);
+        console.log($banana.className);
+        console.log($banana.id);
+        console.log($banana.textContent);
+
+        $banana.textContent = '뽀너너';
+        $banana.apple = '사과';
+
+        delete $banana.apple;
+
+        const $peach = document.getElementById('peach'); // 태그이름이 없으면 null로 확인됨
+        console.log($peach.tagName);
+        $peach.style.fontStyle = 'italic'; // 인라인 속성 적용 (인라인으로 적용하면 부작용 생길 수 있음)
+
+    </script>
+</body>
+</html>
