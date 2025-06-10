@@ -77,7 +77,7 @@ const traders = [
 // 1. **2023년에 대전에서 발생한 모든 거래의 총액을 계산해주세요.**
 
 const practice1 = traders
-    .filter(money => money.trader.city === `대전` && money.year === 2023)
+    .filter(money => money.trader.city === '대전' && money.year === 2023)
     .reduce((acc, curr) => acc + curr.value, 0);
 console.log(`총액 ${practice1}원`);
 
@@ -140,7 +140,11 @@ console.log('================================')
 //   정렬된 리스트를 출력해주세요.
 //   각 거래 정보는 거래자 이름, 도시, 연도, 거래액을 포함해야 합니다.**
 
+
+// soft의 경우 [...]으로 사본을 뜨고 시작하지 않으면 원본 손상됨.
 const practice5 = traders.sort((a, b) => a.value - b.value);
+console.log(practice5);
+console.log('================================')
 console.log(practice5);
 
 
