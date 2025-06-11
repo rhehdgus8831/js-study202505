@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Title</title>
+
+  <style>
+    #text{
+      font-size: 24px;
+      transition: 0.3s;
+    }
+
+  </style>
+</head>
+<body>
+
+  <div id="text">텍스트에 마우스를 올려주세요.</div>
+
+  <script>
+    const $text = document.getElementById('text')
+    const hoverOnHandler = () => {
+     $text.style.color = 'violet'
+    };
+
+    const removeOffHandler = () => {
+      $text.style.color = ''
+    };
+
+    $text.addEventListener('mouseover', hoverOnHandler)
+    $text.addEventListener('mouseout', removeOffHandler)
+
+  </script>
+</body>
+</html>
