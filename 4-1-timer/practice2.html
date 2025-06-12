@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Title</title>
+
+    <style>
+
+
+    </style>
+
+</head>
+<body>
+
+    <script>
+        const colors = ['lightblue', 'lightgreen', 'lightcoral'];
+
+        // 3초마다 순환하면서 바디의 백그라운드 변경
+        // 단 15초 이후 더이상 배경 변경을 멈춰야함
+
+        // let count = 0;
+        const nowDate = new Date();
+        let timerId = null;
+
+        const interval = setInterval(() => {
+            const now = new Date();
+            const time = now - nowDate;
+            now.toLocaleTimeString();
+            // console.log(now.toLocaleTimeString());
+             console.log(time);
+
+            if (time >= 15000) clearTimeout(timerId);
+
+        }, 1000);
+
+
+        function autoSlideHandler(index) { // 오토 슬라이드 함수 선언
+            timerId = setTimeout(() => {
+                // count++;
+                const nextIndex = (index + 1) % colors.length;
+                document.body.style.background = colors[nextIndex];
+                autoSlideHandler(nextIndex);
+            }, 3000);
+
+            /*if (count === 5){
+              clearTimeout(timerId)
+            }*/
+        }
+
+        autoSlideHandler(0);
+
+
+    </script>
+
+
+</body>
+</html>

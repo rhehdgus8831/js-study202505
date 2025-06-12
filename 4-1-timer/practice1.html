@@ -101,6 +101,8 @@
             'https://img.wowtv.co.kr/wowtv_news/dnrs/20200922/B20200922173834073.jpg',
         ];
 
+        let image = images
+
         // 요소 노드 취득
         const [$prev, $image, $next]
             = [...document.getElementById('slider').children];
@@ -158,6 +160,20 @@
             // currentIndex = +e.target.alt[e.target.alt.length - 1] - 1;
             currentIndex = +e.target.dataset.imageOrder;
         });
+
+        // 오토 슬라이드
+       function autoSlideHandler(index){
+           setTimeout(()=>{
+
+               const nextIndex = (index + 1) % image.length;
+               $image.setAttribute('src', images[nextIndex]);
+
+               autoSlideHandler(nextIndex)
+
+           },1000)
+
+       } autoSlideHandler(0);
+
 
     </script>
 </body>
