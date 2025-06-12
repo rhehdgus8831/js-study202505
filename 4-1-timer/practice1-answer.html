@@ -32,6 +32,7 @@
             max-height: 300px;
             display: block;
             object-fit: cover;
+            transition: 1s;
         }
 
         button {
@@ -101,8 +102,6 @@
             'https://img.wowtv.co.kr/wowtv_news/dnrs/20200922/B20200922173834073.jpg',
         ];
 
-        let image = images
-
         // 요소 노드 취득
         const [$prev, $image, $next]
             = [...document.getElementById('slider').children];
@@ -112,12 +111,67 @@
 
         // 현재 렌더링된 이미지가 배열에서 몇번인덱스의 이미지인지 체크할 변수
         let currentIndex = 0;
+        // 현재 슬라이드 쇼의 아이디 저장
+        let slideId = null;
 
         //================   함수 정의 =================//
         // 지정된 이미지주소를 이미지태그에 넣어주는 함수
         function insertImageSource(index) {
             $image.setAttribute('src', images[index]);
         }
+
+        // 2초마다 슬라이드 쇼 재생하는 함수
+        function startSlideShow() {
+            slideId = setInterval(() => {
+                // 다음 이미지로 전환
+                updateImage((currentIndex + 1) % images.length);
+            }, 2000);
+        }
+        // 기존 슬라이드쇼를 종료하고 새로운 슬라이드쇼를 시작하는 함수
+        function restartSlideShow() {
+            clearInterval(slideId); // 슬라이드 쇼 중단
+            slideId = null;
+
+            // 1초 후 슬라이드 쇼 재개
+            setTimeout(() => {
+                startSlideShow();
+            }, 1000);
+        }
+
+        // 메인 이미지에 새로운 이미지를 업데이트하는 함수
+        function updateImage(index) {
+            // fadeout효과 적용
+            $image.style.opacity = 0;
+
+            setTimeout(() => {
+                currentIndex = index;
+                insertImageSource(index);
+                $image.style.opacity = 1;
+            }, 1000);
+        }
+
+
+
+
+        //================   이벤트 바인딩 =================//
+        // 이전 버튼 클릭이벤트
+        $prev.addEventListener('click', () => {
+            updateImage((currentIndex - 1 + images.length) % images.length);
+            restartSlideShow();
+        });
+        // 다음 버튼 클릭이벤트
+        $next.addEventListener('click', () => {
+            updateImage((currentIndex + 1) % images.length);
+            restartSlideShow();
+        });
+
+        // 썸네일 클릭 이벤트 (이벤트 위임을 사용해 버블링 적용)
+        $thumbnailDiv.addEventListener('click', e => {
+            if (!e.target.matches('.thumbnail')) return; // 버그방지
+
+            updateImage(+e.target.dataset.imageOrder);
+            restartSlideShow();
+        });
 
         //================   실행 코드 =================//
         // 배열에 있는 이미지주소를 img태그 만들어서 썸네일로 생성
@@ -133,47 +187,8 @@
             $thumbnailDiv.append($img);
         });
 
-
-        //================   이벤트 바인딩 =================//
-        // 이전 버튼 클릭이벤트
-        $prev.addEventListener('click', () => {
-            // 현재 인덱스 기준으로 1씩 감소  0 -> 2 -> 1 -> 0 -> 2 -> 1
-            currentIndex = (currentIndex - 1 + images.length) % images.length;
-
-            // 실제 이미지 태그에 삽입
-            insertImageSource(currentIndex);
-        });
-        // 다음 버튼 클릭이벤트
-        $next.addEventListener('click', () => {
-            currentIndex = (currentIndex + 1) % images.length;
-
-            // 실제 이미지 태그에 삽입
-            insertImageSource(currentIndex);
-        });
-
-        // 썸네일 클릭 이벤트 (이벤트 위임을 사용해 버블링 적용)
-        $thumbnailDiv.addEventListener('click', e => {
-            if (!e.target.matches('.thumbnail')) return; // 버그방지
-
-            $image.src = e.target.src;
-            // currentIndex 갱신코드가 없음!
-            // currentIndex = +e.target.alt[e.target.alt.length - 1] - 1;
-            currentIndex = +e.target.dataset.imageOrder;
-        });
-
-        // 오토 슬라이드
-       function autoSlideHandler(index){
-           setTimeout(()=>{
-
-               const nextIndex = (index + 1) % image.length;
-               $image.setAttribute('src', images[nextIndex]);
-
-               autoSlideHandler(nextIndex)
-
-           },1000)
-
-       } autoSlideHandler(0);
-
+        // 슬라이드 쇼 실행
+        startSlideShow();
 
     </script>
 </body>
