@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Title</title>
+
+    <style>
+        .container {
+            width: 300px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+        }
+
+        .draggable-item {
+            padding: 10px;
+            margin: 5px 0;
+            background-color: #007bff;
+            color: white;
+            border-radius: 5px;
+            cursor: grab;
+        }
+
+        .drop-zone {
+            border: 1px dashed #007bff;
+            border-radius: 5px;
+            padding: 10px;
+            min-height: 50px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .placeholder {
+            height: 40px;
+            margin: 5px 0;
+            background-color: rgba(0, 123, 255, 0.3);
+            border-radius: 5px;
+        }
+    </style>
+
+</head>
+<body>
+
+    <div class="container">
+        <div class="drop-zone" id="dropZone">
+            <div class="draggable-item" draggable="true">항목 1</div>
+            <div class="draggable-item" draggable="true">항목 2</div>
+            <div class="draggable-item" draggable="true">항목 3</div>
+            <div class="draggable-item" draggable="true">항목 4</div>
+        </div>
+    </div>
+
+    <script>
+
+        const $dropZone = document.getElementById('dropZone');
+
+        // 드래그가 끝날때 해당 박스가 들어갈 자리를 보여주는 빈 박스 생성
+        const $placeholder = document.createElement('div');
+        $placeholder.classList.add('placeholder');
+        // 드래그 시작 이벤트
+        // 드롭 존 안에 있는 요소를 드래기하기 시작하면 발동
+        $dropZone.addEventListener('dragstart', e => {
+            //   console.log('드래그 시작');
+            // console.log(e.target);
+
+            // 드래그한 요소 기존 화면에서 제거
+            setTimeout(() => { // 시간 지연으로 자연스럽게 빠지게
+                e.target.classList.add('hidden');
+            }, 0);
+
+
+        });
+
+        // 드래그 끝 이벤트 : 원래 안에 있는 녀석을 드롭했을 때
+        // draggable-item에서 드롭 시 벌어지는 일
+        $dropZone.addEventListener('dragend', e => {
+            // console.log('드래그 끝');
+            // console.log(e.target);
+
+            // 드래그 요소 다시 생기게
+            e.target.classList.remove('hidden');
+
+        });
+
+        // 외부 파일,요소 드래그하는 이벤트
+        $dropZone.addEventListener('dragover', e => {
+            e.preventDefault();
+            // console.log(`드래그 오버`);
+
+            // 현재 드래그 중인 요소의 마우스 좌표에 따라 빈 박스가 들어갈 위치를 정함
+            // e.target : 드래그 요소를 덮고 있는 요소
+            const $target = e.target;
+            // 밝고 있는게 드래그 가능한 요소일 때만 빈박스 배치
+            if ($target.classList.contains('draggable-item')) {
+
+                // 밟고있는 target의 위치 정보를 확인
+                const rect = $target.getBoundingClientRect();
+                // 현재 마우스포인터와 tagret간의 top 거리를 계산
+                const distance = e.clientY -rect.top;
+
+                if (distance < rect.height / 2){
+                    $target.before($placeholder)
+                }else {
+                    $target.after($placeholder)
+                }
+
+                $target.before($placeholder);
+            }
+
+        });
+        // 드롭 이벤트 : 외부 파일이나 다른 곳에서 떨어뜨린 아이템
+        $dropZone.addEventListener('drop', e => {
+            // 파일이나 이미지를 드롭하면 새 탭에서 이미지가 열리거나
+            // 파일이 다운로드 되는데 이런 일이 발생하면 드롭이벤트가 정상처리 안 됨.
+            e.preventDefault(); // 기본기능 방지를 해야함
+            // console.log(`드롭`);
+        });
+
+
+    </script>
+
+
+</body>
+</html>
