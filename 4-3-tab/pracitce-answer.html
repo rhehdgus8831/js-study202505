@@ -185,6 +185,23 @@
             }
         });
 
+        // 이전버튼 클릭시
+        $prevBtn.addEventListener('click', e => {
+            if (currentStep > 1) {
+                currentStep--;
+                // UI 업데이트
+                updateUI();
+            }
+        });
+
+        // 인디케이터 직접 클릭 시
+        $indicators.forEach($indicator => {
+            $indicator.addEventListener('click', e => {
+                currentStep = +e.target.dataset.step;
+                updateUI();
+            });
+        });
+
     </script>
 
 </body>
