@@ -244,13 +244,21 @@
 
         function basicAttack(){
             const damage = Math.floor(Math.random() * 15) + 1;        // 1~15 랜덤
-            $logArea1.innerHTML = `${hero1Name}이(가) 일반 공격! 데미지 ${damage}`;
+            $logArea1.innerHTML = `🔥 ${hero1Name}이(가) 일반 공격! 데미지 ${damage}`;
             return damage;                                           // 데미지 값 반환
         }
         $btnAttack1.addEventListener('click', e => {
             basicAttack()
         })
+        function speacialAttack(){
+            const damage = Math.floor(Math.random() * 15) + 1;
+            $logArea1.innerHTML = `☄️ ${hero1Special}을(를) 사용하며 ${hero1Name}이(가) 강력한 공격을 날립니다! 데미지 ${damage}`;
+            return damage;
+        }
 
+        $btnSpecial1.addEventListener('click',e => {
+            speacialAttack()
+        })
 
 
 
