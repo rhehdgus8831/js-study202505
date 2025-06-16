@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JS 클로저 - 2명의 용사</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Jua&display=swap');
+
+        body {
+            font-family: 'Jua', sans-serif;
+            background-color: #2c3e50;
+            color: #ecf0f1;
+            padding: 20px 0;
+        }
+
+        .main-title {
+            text-align: center;
+            color: #f1c40f;
+            text-shadow: 2px 2px 2px #1a252f;
+            font-size: 2.5em;
+            margin-bottom: 30px;
+        }
+
+        .wrapper {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+
+        .hero-panel {
+            background-color: #34495e;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            width: 500px;
+            border: 3px solid #95a5a6;
+        }
+
+        .panel-title {
+            text-align: center;
+            color: #1abc9c;
+            margin-top: 0;
+        }
+
+        .setup-area, .battle-arena {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 2px dashed #7f8c8d;
+            border-radius: 8px;
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 8px;
+            font-size: 1.1em;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #7f8c8d;
+            background-color: #2c3e50;
+            color: #ecf0f1;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-family: 'Jua', sans-serif;
+            font-size: 1em;
+        }
+
+        .button-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        button {
+            flex-grow: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: 'Jua', sans-serif;
+            text-shadow: 1px 1px 1px #333;
+            min-width: 120px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+        }
+
+        .btn-create {
+            background-color: #e67e22;
+        }
+
+        .btn-attack {
+            background-color: #c0392b;
+        }
+
+        .btn-special {
+            background-color: #8e44ad;
+        }
+
+        .btn-damage {
+            background-color: #e74c3c;
+        }
+
+        .btn-heal {
+            background-color: #27ae60;
+        }
+
+        .status-display {
+            text-align: center;
+            font-size: 1.3em;
+            color: #3498db;
+            margin-bottom: 15px;
+        }
+
+        .battle-log {
+            background-color: #1a252f;
+            height: 120px;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-y: auto;
+            font-family: 'Jua', sans-serif;
+            border: 1px solid #7f8c8d;
+        }
+
+        .log-entry {
+            margin-bottom: 8px;
+            padding-bottom: 8px;
+            border-bottom: 1px dashed #34495e;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1 class="main-title">⚔️ 클로저 군단: 두 용사의 전투 ⚔️</h1>
+    <div class="wrapper">
+        <div class="hero-panel" id="panel-1">
+            <h2 class="panel-title">🚩 용사 1</h2>
+            <div class="setup-area">
+                <label for="hero-name-1">이름:</label>
+                <input type="text" id="hero-name-1" value="캡틴 자바스크립트">
+                <label for="special-move-1" style="margin-top: 10px;">필살기:</label>
+                <input type="text" id="special-move-1" value="프로토타입 체인">
+                <div class="button-group" style="justify-content: center;">
+                    <button id="btn-create-1" class="btn-create">용사 1 생성!</button>
+                </div>
+            </div>
+            <div id="arena-1" class="battle-arena hidden">
+                <div id="hero-status-1" class="status-display"></div>
+                <div class="button-group">
+                    <button id="btn-attack-1" class="btn-attack">일반 공격</button>
+                    <button id="btn-special-1" class="btn-special">필살기</button>
+                    <button id="btn-damage-1" class="btn-damage">데미지 입기</button>
+                    <button id="btn-heal-1" class="btn-heal">회복</button>
+                </div>
+                <label style="margin-top: 15px;">전투 로그 1</label>
+                <div class="battle-log" id="battle-log-1"></div>
+            </div>
+        </div>
+
+        <div class="hero-panel" id="panel-2">
+            <h2 class="panel-title">🏁 용사 2</h2>
+            <div class="setup-area">
+                <label for="hero-name-2">이름:</label>
+                <input type="text" id="hero-name-2" value="미스 리액트">
+                <label for="special-move-2" style="margin-top: 10px;">필살기:</label>
+                <input type="text" id="special-move-2" value="가상 DOM 폭격">
+                <div class="button-group" style="justify-content: center;">
+                    <button id="btn-create-2" class="btn-create">용사 2 생성!</button>
+                </div>
+            </div>
+            <div id="arena-2" class="battle-arena hidden">
+                <div id="hero-status-2" class="status-display"></div>
+                <div class="button-group">
+                    <button id="btn-attack-2" class="btn-attack">일반 공격</button>
+                    <button id="btn-special-2" class="btn-special">필살기</button>
+                    <button id="btn-damage-2" class="btn-damage">데미지 입기</button>
+                    <button id="btn-heal-2" class="btn-heal">회복</button>
+                </div>
+                <label style="margin-top: 15px;">전투 로그 2</label>
+                <div class="battle-log" id="battle-log-2"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 용사 1번 이름과 필살기 설정
+        const $heroName1 = document.getElementById('hero-name-1'); // 용사 이름 선언
+        const $specialMove1 = document.getElementById('special-move-1'); // 필살기 이름 선언
+        const $btnCreate1 = document.getElementById('btn-create-1'); // 1번 버튼 선언
+        const $arena1 = document.getElementById('arena-1'); // 1번 전투로그 패널
+
+        // panel1에서 가져온 선언
+        const panel1 = document.getElementById('panel-1');
+        const $setUpArea1 = panel1.querySelector('.setup-area');       // 입력 폼 영역
+        const $status1 = panel1.querySelector('#hero-status-1');    // 상태 표시 영역
+        const $logArea1 = panel1.querySelector('.battle-log');       // 로그 표시 영역
+        // 공격 선언
+        const $btnAttack1 = panel1.querySelector('#btn-attack-1');     // 공격 버튼
+        const $btnSpecial1 = panel1.querySelector('#btn-special-1');    // 필살기 버튼
+        const $btnDamage1 = panel1.querySelector('#btn-damage-1');     // 데미지 버튼
+        const $btnHeal1 = panel1.querySelector('#btn-heal-1');       // 회복 버튼
+
+        // 히어로 상태
+        let hero1Name = '';
+        let hero1Special = '';
+        let hero1Hp = 0;
+        let hero1Logs = [];
+
+        // 용사 1 생성 버튼 클릭 시
+
+        $btnCreate1.addEventListener('click', () => {
+
+            // 1) 입력값 읽어서 상태 변수 초기화
+            hero1Name = $heroName1.value.trim() || '용사1';
+            hero1Special = $specialMove1.value.trim() || '필살기 없음';
+            hero1Hp = 100;
+            hero1Logs = [];
+
+            // 2) 화면 전환
+            $setUpArea1.classList.add('hidden'); // 1번 버튼을 눌렀을때 1번 히어로 패널이 없어지면서
+            $arena1.classList.remove('hidden'); //  1번 전투로그로 넘어감
+
+            // 3) 상태 영역 업데이트
+            $status1.textContent = `💫${hero1Name} | HP: ${hero1Hp}/100 `;
+            // 4) 로그 영역 초기화 (빈 화면)
+            $logArea1.innerHTML = ` 🌟용사 (${hero1Name}) 소환 !`;
+        });
+
+        // ===========전투 함수 =========== //
+
+        function basicAttack(){
+            const damage = Math.floor(Math.random() * 15) + 1;        // 1~15 랜덤
+            $logArea1.innerHTML = `${hero1Name}이(가) 일반 공격! 데미지 ${damage}`;
+            return damage;                                           // 데미지 값 반환
+        }
+        $btnAttack1.addEventListener('click', e => {
+            basicAttack()
+        })
+
+
+
+
+
+
+
+    </script>
+</body>
+</html>
