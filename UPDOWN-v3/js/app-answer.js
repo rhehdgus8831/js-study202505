@@ -4,14 +4,21 @@
 // 게임에 필요한 데이터들을 하나의 객체로 묶어서 관리
 const gameData = {
     secretNumber: Math.floor(Math.random() * 100) + 1, // 1 ~ 100 사이 무작위 숫자
-    userAnswer: 0, // 사용자의 입력
+    userAnswer: null, // 사용자의 입력
     remainingChanges: 10, // 남은 기회
     minRange: 1, // 범위의 최소값
     maxRange: 100, // 범위의 최대값
     guessHistory: [], // 사용자의 추리 기록 로그
+    difficulty: 'normal', // 난이도
 };
 
 // ======= DOM 가져오기 ====== //
+// [중급 문제 1] 난이도 선택 UI 요소
+const $setupContainer = document.querySelector('.setup-container');
+const $difficultySelector = document.getElementById('difficulty');
+const $startGameBtn = document.getElementById('start-game-button');
+const $gameContainer = document.querySelector('.game-container');
+
 const $guessForm = document.getElementById('guess-form');
 const $guessInput = document.getElementById('guess-input');
 const $begin = document.getElementById('begin');
@@ -22,6 +29,8 @@ const $historyList = document.getElementById('history-list');
 
 // 힌트 버튼 추가
 const $hintBtn = document.getElementById('hint-button');
+// 포기 버튼 추가
+const $giveUpBtn = document.getElementById('give-up-button');
 
 const $finishModal = document.getElementById('finish-modal');
 const $finishTitle = document.getElementById('finish-title');
@@ -98,8 +107,29 @@ function judgeGuess() {
 
 }
 
+// 정답에 어느정도 가까워졌는지를 바디 배경색으로 표현
+function changeBodyHint() {
+
+    if (gameData.userAnswer === null) return;
+
+    //                             50                  60
+    const diff = Math.abs(gameData.secretNumber - gameData.userAnswer);
+
+    if (diff <= 10) {
+        document.body.style.background = '#f99696';
+    } else if (diff <= 20) {
+        document.body.style.background = '#89b9ff';
+    } else {
+        document.body.style.background = '#e9ecef';
+    }
+}
+
 // 2. UI 업데이트 로직
 function updateUI() {
+
+    // 바디의 배경색 변경
+    changeBodyHint();
+
     // 범위값 리렌더링
     $begin.textContent = gameData.minRange;
     $end.textContent = gameData.maxRange;
@@ -148,15 +178,35 @@ function resetInput() {
 }
 
 // 4. 게임을 재시작하는 로직
-function initializeGame() {
-    // 데이터 리셋
-    gameData.secretNumber = Math.floor(Math.random() * 100) + 1;
-    gameData.remainingChanges = 10;
-    gameData.minRange = 1;
-    gameData.maxRange = 100;
-    gameData.guessHistory = [];
+function initializeGame(difficulty) {
 
-    console.log(`정답: ${gameData.secretNumber}`);
+    gameData.difficulty = difficulty;
+
+    let selectedChances, selectedMax;
+    switch (difficulty) {
+        case 'easy':
+            selectedMax = 50;
+            selectedChances = 8;
+            break;
+        case 'normal':
+            selectedMax = 100;
+            selectedChances = 10;
+            break;
+        case 'hard':
+            selectedMax = 200;
+            selectedChances = 10;
+            break;
+    }
+
+    // 데이터 리셋
+    gameData.remainingChanges = selectedChances;
+    gameData.minRange = 1;
+    gameData.maxRange = selectedMax;
+    gameData.secretNumber = Math.floor(Math.random() * selectedMax) + 1;
+    gameData.guessHistory = [];
+    gameData.userAnswer = null;
+
+    console.log(`[${difficulty}] 정답: ${gameData.secretNumber}`);
 
     // UI 리셋
     updateFeedback('추리를 시작하세요', '');
@@ -180,6 +230,30 @@ function isValidate(userGuess) {
 
 // ==== 이벤트 리스너 설정 ==== //
 
+// 컨테이너 변경
+function setToInit(isInit=false) {
+    if (isInit) {
+        $setupContainer.classList.remove('hidden');
+        $gameContainer.classList.add('hidden');
+    } else {
+        $setupContainer.classList.add('hidden');
+        $gameContainer.classList.remove('hidden');
+    }
+    updateUI();
+}
+
+// 0. 게임 시작 버튼 이벤트
+$startGameBtn.addEventListener('click', e => {
+    // 선택한 난이도 값 읽어오기
+    const selectedDifficulty = $difficultySelector.value;
+
+    // 난이도 따라 게임 데이터값 변경 후 게임 시작
+    initializeGame(selectedDifficulty);
+
+    // 컨테이너 변경
+    setToInit();
+});
+
 // 1. 숫자를 입력하고 도전을 클릭하는 이벤트
 $guessForm.addEventListener('submit', e => {
 
@@ -202,8 +276,13 @@ $guessForm.addEventListener('submit', e => {
 });
 
 // 2. 게임 재시작 이벤트
+// 난이도 선택 화면으로 돌아가야 합니다.
 $restartBtn.addEventListener('click', e => {
-    initializeGame();
+    // initializeGame();
+    gameData.userAnswer = null;
+    document.body.style.background = '#e9ecef';
+    $finishModal.classList.remove('show');
+    setToInit(true);
 });
 
 // 3. 힌트 버튼 이벤트
@@ -220,5 +299,12 @@ $hintBtn.addEventListener('click', e => {
     updateUI();
 });
 
+// 4. 포기 버튼 이벤트
+$giveUpBtn.addEventListener('click', e => {
+    showFinishModal(false);
+});
+
+
+
 // ==== 실행 코드 ==== //
-initializeGame();
+// initializeGame();

@@ -1,4 +1,3 @@
-
 // ===== 전역 상태 관리 ===== //
 
 // 게임에 필요한 데이터들을 하나의 객체로 묶어서 관리
@@ -22,6 +21,8 @@ const $historyList = document.getElementById('history-list');
 
 // 힌트 버튼 추가
 const $hintBtn = document.getElementById('hint-button');
+// 포기 버튼 추가
+const $giveUpBtn = document.getElementById('give-up-button');
 
 const $finishModal = document.getElementById('finish-modal');
 const $finishTitle = document.getElementById('finish-title');
@@ -98,8 +99,26 @@ function judgeGuess() {
 
 }
 
+// 정답에 어느정도 가까워졌는지를 바디 배경색으로 표현
+function changeBodyHint() {
+    //                             50                  60
+    const diff = Math.abs(gameData.secretNumber - gameData.userAnswer);
+
+    if (diff <= 10) {
+        document.body.style.background = '#f99696';
+    } else if (diff <= 20) {
+        document.body.style.background = '#89b9ff';
+    } else {
+        document.body.style.background = '#e9ecef';
+    }
+}
+
 // 2. UI 업데이트 로직
 function updateUI() {
+
+    // 바디의 배경색 변경
+    changeBodyHint();
+
     // 범위값 리렌더링
     $begin.textContent = gameData.minRange;
     $end.textContent = gameData.maxRange;
@@ -155,6 +174,7 @@ function initializeGame() {
     gameData.minRange = 1;
     gameData.maxRange = 100;
     gameData.guessHistory = [];
+    gameData.userAnswer = null;
 
     console.log(`정답: ${gameData.secretNumber}`);
 
@@ -218,6 +238,11 @@ $hintBtn.addEventListener('click', e => {
     const hint = gameData.secretNumber % 2 === 0 ? '짝수' : '홀수';
     updateFeedback(`힌트: 정답은 ${hint}입니다. (기회 1회 차감)`, '');
     updateUI();
+});
+
+// 4. 포기 버튼 이벤트
+$giveUpBtn.addEventListener('click', e => {
+    showFinishModal(false);
 });
 
 // ==== 실행 코드 ==== //
