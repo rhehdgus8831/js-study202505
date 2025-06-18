@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Title</title>
+
+  <style>
+
+    .guess-button {
+      padding: 12px 25px;
+      font-size: 18px;
+      font-weight: 700;
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .guess-button:hover {
+      background-color: #0b5ed7;
+    }
+
+  </style>
+
+
+</head>
+<body>
+
+  <input type="text" id="keywords" placeholder="기업이름이나 티커를 입력하세요." required>
+  <button type="submit" class="guess-button">검색</button>
+
+
+  <script>
+    const API_KEY = '';
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`;
+
+    const xhr = new XMLHttpRequest();
+
+
+    const aiPrompt = `
+      나는 오늘 미국 주식을 기술적으로 분석해줄 예정이야
+      사용자는 아래에 키워드를 넣을꺼야
+      이 키워드로 기술적 분석 해주면 돼 !
+      [ $(keywords) ]
+    `;
+
+
+    xhr.open('POST', url);
+
+    const payload = {
+      contents: [
+        {
+          parts: [
+            {
+              text: aiPrompt
+            }
+          ]
+        }
+      ]
+    };
+
+    const reqData = JSON.stringify(payload);
+
+    xhr.setRequestHeader('Content-Type', 'application/json');
+
+    xhr.send(reqData);
+
+    xhr.addEventListener('load', e => {
+      console.log(xhr.responseText);
+    });
+
+
+
+
+
+  </script>
+</body>
+</html>

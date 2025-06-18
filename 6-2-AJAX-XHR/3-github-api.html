@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Title</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #f5f5f5;
+        }
+        #search-container {
+            margin-top: 20px;
+        }
+        #profile {
+            margin-top: 20px;
+            padding: 20px;
+            width: 300px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            background-color: #fff;
+        }
+        #repos {
+            margin-top: 10px;
+            width: 300px;
+        }
+        .repo-item {
+            padding: 10px;
+            margin-bottom: 5px;
+            border-radius: 5px;
+            background-color: #e9e9e9;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="search-container">
+        <input type="text" id="username" placeholder="GitHub 사용자 이름을 입력하세요" />
+        <button id="searchButton">조회</button>
+    </div>
+
+    <div id="profile"></div>
+    <div id="repos"></div>
+
+    <script>
+
+        const url = `https://api.github.com`;
+
+        function fetchGet(url, callback) {
+            const xhr = new XMLHttpRequest();
+            xhr.open('GET', url); // 요청 세팅
+            xhr.send(); // 요청 보내기
+            // 응답 데이터 가져오기
+            xhr.addEventListener('load', e => {
+                const responseData = JSON.parse(xhr.responseText);
+                callback(responseData);
+            });
+        }
+
+        // 프로필 정보 표시 함수
+        function displayProfile(data) {
+            $profileContainer.innerHTML = `
+          <img src="${data.avatar_url}" alt="${data.login}" width="80" height="80" style="border-radius: 50%;">
+          <h2>${data.name || data.login}</h2>
+          <p>팔로워: ${data.followers} | 팔로잉: ${data.following}</p>
+          <p><a href="${data.html_url}" target="_blank">GitHub 프로필 보기</a></p>
+        `;
+        }
+
+        // 저장소 목록 표시 함수
+        function displayRepos(repos) {
+            $reposContainer.innerHTML = '<h3>저장소 목록</h3>';
+            repos.forEach(repo => {
+                const repoElement = document.createElement('div');
+                repoElement.classList.add('repo-item');
+                repoElement.innerHTML = `
+            <strong><a href="${repo.html_url}" target="_blank">${repo.name}</a></strong>
+            <p>⭐ ${repo.stargazers_count} | 🍴 ${repo.forks_count}</p>
+          `;
+                $reposContainer.append(repoElement);
+            });
+        }
+
+        const $searchBtn = document.getElementById('searchButton');
+        const $userInput = document.getElementById('username');
+        const $profileContainer = document.getElementById('profile');
+        const $reposContainer = document.getElementById('repos');
+
+        $searchBtn.addEventListener('click', e => {
+            const username = $userInput.value;
+
+            // github서버와 통신하여 유저정보 불러오기
+            fetchGet(`${url}/users/${username}`, (response) => {
+                // console.log(response);
+
+                displayProfile(response);
+
+                fetchGet(response.repos_url, (repos) => {
+                    // console.log(repos);
+
+                    displayRepos(repos);
+                });
+            });
+        });
+
+
+    </script>
+</body>
+</html>
